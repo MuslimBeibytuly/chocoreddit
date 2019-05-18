@@ -1,0 +1,28 @@
+version: '3'
+services:
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+
+  django:
+    image: muslimbeibytuly/choco_reddit:master
+    command: ./entrypoint.sh
+    volumes:
+      - ./.env:/choco_reddit/choco_reddit/.env
+    depends_on:
+      - db
+    ports:
+      - 8000:8000
+
+  vue:
+    build: ./
+    command: bash -c "npm i && npm run serve --hot"
+    volumes:
+      - ./:/chocoreddit:rw
+    depends_on:
+      - django
+    ports:
+      - 8080:8080
